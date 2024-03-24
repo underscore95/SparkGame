@@ -26,12 +26,14 @@ GameApp::GameApp() : EventListener(Spark::Events::EventType::WindowResize)
 	Spark::registerSystem(std::make_unique<TestSystem>());
 
 	// TEST CAMERA
-	//camera = Spark::Graphics::ortho(0.0f, (float)window->getDimensions().x, (float)window->getDimensions().y, 0.0f);
+	//camera = Spark::Graphics::ortho(0.0f, 16, 9, 0.0f);
 
-	camera = Spark::Graphics::perspective(glm::radians(70.0f), 1280.0f / 720.0f);
-	camera->setPosition(glm::vec3(0, 0, 50));
-	camera->setRotationInDegrees(glm::vec3(0, 0, 20));
+	camera = Spark::Graphics::perspective(glm::radians(45.0f), glm::vec2(1280.0f, 720.0f));
+	//camera->setPosition(glm::vec3(0, 0, 10));
+	//camera->setRotationInDegrees(glm::vec3(0, 0, 20));
 	//camera->setRotationInDegrees(glm::vec3(0, 20.0, 100.0));
+
+	camera->setCameraController(std::make_unique<Spark::Graphics::KeyboardCameraController>(camera, window->getUserInput(), 10.0f, 2.5f));
 
 	// TEST RENDERER
 	renderer = Spark::Graphics::createRenderer(window, camera);
@@ -50,12 +52,28 @@ GameApp::GameApp() : EventListener(Spark::Events::EventType::WindowResize)
 
 	// Vertex Buffer
 	const size_t VERTEX_COUNT = 4;
+	constexpr float z = -1.0f;
 	const float* vertices = new float[] {
-		0.0f, 0.0f, -0.5f, 0.0f, 0.0f,
-			300.0f, 0.0f, -0.5f, 1.0f, 0.0f,
-			300.0f, 300.0f, -0.5f, 1.0f, 1.0f,
-			0.0f, 300.0f, -0.5f, 0.0f, 1.0f,
+		-0.5f, -0.5f, z, 0.0f, 0.0f,
+			0.5, -0.5f, z, 1.0f, 0.0f,
+			0.5f, 0.5f, z, 1.0f, 1.0f,
+			-0.5f, 0.5f, z, 0.0f, 1.0f,
 		};
+
+	auto m = glm::perspective(glm::radians(70.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
+	m = glm::scale(m, glm::vec3(1.0f / 1280.0f, 1.0f / 720.0f, 1.0f));
+	auto test = glm::vec4(-0.5f, 0.5f, z, 1.0f);
+	auto test2 = m * test;
+	std::stringstream ss;
+	ss << "Positions:\n";
+	for (int i = 0; i < 4; ++i) {
+		glm::vec4 pos(vertices[i * 5], vertices[i * 5 + 1], vertices[i * 5 + 2], 1.0f);
+		glm::vec4 projPos = camera->getMatrix().getMVP() * pos;
+		ss << "original - x: " << pos.x / pos.w << ", y: " << pos.y / pos.w << ", " << pos.z / pos.w << "\n";
+		ss << "projected - x: " << projPos.x / projPos.w << ", y: " << projPos.y / projPos.w << ", " << projPos.z / projPos.w << "\n";
+		ss << "proj pos w: " << projPos.w << "\n";
+	}
+	logger.info(ss);
 
 	std::unique_ptr<Spark::Graphics::VertexBuffer> vertexBuffer =
 		Spark::Graphics::createVertexBuffer(VERTEX_COUNT * layout->getStride(), vertices);
