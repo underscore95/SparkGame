@@ -60,21 +60,6 @@ GameApp::GameApp() : EventListener(Spark::Events::EventType::WindowResize)
 			-0.5f, 0.5f, z, 0.0f, 1.0f,
 		};
 
-	auto m = glm::perspective(glm::radians(70.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
-	m = glm::scale(m, glm::vec3(1.0f / 1280.0f, 1.0f / 720.0f, 1.0f));
-	auto test = glm::vec4(-0.5f, 0.5f, z, 1.0f);
-	auto test2 = m * test;
-	std::stringstream ss;
-	ss << "Positions:\n";
-	for (int i = 0; i < 4; ++i) {
-		glm::vec4 pos(vertices[i * 5], vertices[i * 5 + 1], vertices[i * 5 + 2], 1.0f);
-		glm::vec4 projPos = camera->getMatrix().getMVP() * pos;
-		ss << "original - x: " << pos.x / pos.w << ", y: " << pos.y / pos.w << ", " << pos.z / pos.w << "\n";
-		ss << "projected - x: " << projPos.x / projPos.w << ", y: " << projPos.y / projPos.w << ", " << projPos.z / projPos.w << "\n";
-		ss << "proj pos w: " << projPos.w << "\n";
-	}
-	logger.info(ss);
-
 	std::unique_ptr<Spark::Graphics::VertexBuffer> vertexBuffer =
 		Spark::Graphics::createVertexBuffer(VERTEX_COUNT * layout->getStride(), vertices);
 
