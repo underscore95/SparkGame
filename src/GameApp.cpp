@@ -122,18 +122,15 @@ void GameApp::update(const float dt)
 
 void GameApp::render()
 {
-	//Spark::Graphics::getMVP().setProj(glm::ortho(0.0f, (float)window->getDimensions().x, 0.0f, (float)window->getDimensions().y, -1.0f, 1.0f));
-
 	renderer->startDrawing(material);
 
-	// crocTexture is a uniform int that I use to determine which sampler2d to use
-	shader->setUniform1i("crocTexture", false);
+	material->setActiveTexture(0);
 	renderer->draw(*vertexArray);
 
-	shader->setUniform1i("crocTexture", true);
+	material->setActiveTexture(1);
 	renderer->draw(*vertexArray2);
 
-	window->swapBuffers();
-
 	renderer->stopDrawing();
+
+	window->swapBuffers();
 }
