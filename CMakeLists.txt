@@ -11,15 +11,15 @@ endif()
 
 project ("SparkGame")
 
-include(C:/Users/unfea/Documents/vcpkg/vcpkg/scripts/buildsystems/vcpkg.cmake) # REPLACE PATH
+include(C:/libs/vcpkg-master/scripts/buildsystems/vcpkg.cmake) # REPLACE PATH
 
 add_executable (SparkGame "src/Main.cpp" "src/GameApp.h" "src/GameApp.cpp" "src/TestComponent.h" "src/TestSystem.h" "src/TestSystem.cpp")
 
 find_package(glm REQUIRED)
 target_link_libraries(SparkGame PUBLIC glm::glm)
 
-link_directories("C:/Users/unfea/Documents/Coding/C++/Spark/out/build/x64-debug/Spark.dll") # REPLACE PATH
-include_directories("C:/Users/unfea/Documents/Coding/C++/Spark/out/build/x64-debug/include/") # REPLACE PATH
+link_directories("C:/Coding/C++/Spark/Spark/out/build/x64-debug/Spark.dll") # REPLACE PATH
+include_directories("C:/Coding/C++/Spark/Spark/out/build/x64-debug/include/") # REPLACE PATH
 target_link_libraries(SparkGame PRIVATE Spark.dll)
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)

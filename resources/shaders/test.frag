@@ -6,5 +6,5 @@ in vec2 v_Uv;
 
 void main()
 {
-	colour = vec4(1);
+	colour = texture(Sp_ActiveTexture, v_Uv);
 }

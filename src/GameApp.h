@@ -15,6 +15,9 @@ private:
 	std::shared_ptr<Spark::Graphics::Texture> textureCroc;
 	std::shared_ptr<Spark::Graphics::Camera> camera;
 	std::shared_ptr<Spark::Graphics::Material> material;
+	std::shared_ptr<Spark::Graphics::Model> model;
+	std::shared_ptr<Spark::Audio::Sound> sound;
+	std::unique_ptr<Spark::Audio::Source> source;
 
 public:
 	GameApp();

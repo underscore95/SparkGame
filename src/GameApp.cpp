@@ -51,16 +51,17 @@ GameApp::GameApp() : EventListener(Spark::Events::EventType::WindowResize)
 	// Vertex Buffer Layout
 	std::shared_ptr<Spark::Graphics::VertexBufferLayout> layout = Spark::Graphics::createVertexBufferLayout();
 	layout->pushFloat(3); // Position Coordinates
+	layout->pushFloat(3); // Normals
 	layout->pushFloat(2); // Texture Coordinates
 
 	// Vertex Buffer
 	const size_t VERTEX_COUNT = 4;
 	constexpr float z = -1.0f;
 	const float* vertices = new float[] {
-		-0.5f, -0.5f, z, 0.0f, 0.0f,
-			0.5f, -0.5f, z, 1.0f, 0.0f,
-			0.5f, 0.5f, z, 1.0f, 1.0f,
-			-0.5f, 0.5f, z, 0.0f, 1.0f,
+		-0.5f, -0.5f, z,    0.0f, 0.0f, 0.0f,      0.0f, 0.0f,
+			0.5f, -0.5f, z,    0.0f, 0.0f, 0.0f,      1.0f, 0.0f,
+			0.5f, 0.5f, z,    0.0f, 0.0f, 0.0f,      1.0f, 1.0f,
+			-0.5f, 0.5f, z,    0.0f, 0.0f, 0.0f,      0.0f, 1.0f,
 		};
 
 	std::unique_ptr<Spark::Graphics::VertexBuffer> vertexBuffer =
@@ -68,10 +69,10 @@ GameApp::GameApp() : EventListener(Spark::Events::EventType::WindowResize)
 
 	// Vertex Buffer 2
 	const float* vertices2 = new float[] {
-		-0.5f, -2.5f, z, 0.0f, 0.0f,
-			0.5f, -2.5f, z, 1.0f, 0.0f,
-			0.5f, -1.5f, z, 1.0f, 1.0f,
-			-0.5f, -1.5f, z, 0.0f, 1.0f
+		-0.5f, -2.5f, z,    0.0f, 0.0f, 0.0f,     0.0f, 0.0f,
+			0.5f, -2.5f, z,     0.0f, 0.0f, 0.0f,    1.0f, 0.0f,
+			0.5f, -1.5f, z,     0.0f, 0.0f, 0.0f,    1.0f, 1.0f,
+			-0.5f, -1.5f, z,     0.0f, 0.0f, 0.0f,    0.0f, 1.0f
 		};
 
 	std::unique_ptr<Spark::Graphics::VertexBuffer> vertexBuffer2 =
@@ -98,6 +99,16 @@ GameApp::GameApp() : EventListener(Spark::Events::EventType::WindowResize)
 	material = std::make_unique<Spark::Graphics::Material>(shader);
 	material->withTexture(textureCat, 0);
 	material->withTexture(textureCroc, 1);
+
+	// Model
+	Spark::Graphics::Models::OBJProperties properties;
+	properties.shaders = shader;
+	properties.textureSlots.push_back(8);
+	model = Spark::Graphics::Models::parseObj("resources/models/cat/cat.obj", properties);
+
+	// SFX
+	sound = Spark::Audio::AudioFactory::loadSound("resources/audio/bounce.wav");
+	source = Spark::Audio::AudioFactory::createSource(*sound);
 }
 
 GameApp::~GameApp()
@@ -115,6 +126,10 @@ void GameApp::update(const float dt)
 
 	window->update();
 
+	if (window->getUserInput().isKeyPressed(Spark::Window::Keyboard::ENTER)) {
+		source->play();
+	}
+
 	if (!window->isWindowOpen()) {
 		stop();
 	}
@@ -131,6 +146,8 @@ void GameApp::render()
 	renderer->draw(*vertexArray2);
 
 	renderer->stopDrawing();
+
+	renderer->renderModel(*model);
 
 	window->swapBuffers();
 }
